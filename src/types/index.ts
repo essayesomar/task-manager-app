@@ -8,5 +8,4 @@ export interface Task {
 
 export type TaskAction =
   | { type: 'ADD_TASK'; payload: { title: string; description: string } }
-  | { type: 'TOGGLE_TASK'; payload: { id: string } }
-  | { type: 'SET_TASKS'; payload: Task[] };
+  | { type: 'TOGGLE_TASK'; payload: { id: string } };

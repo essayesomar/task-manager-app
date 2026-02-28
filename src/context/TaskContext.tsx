@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useEffect, useRef } from 'react';
+import { createContext, useContext, useReducer, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { Task, TaskAction } from '../types';
 
@@ -14,6 +14,15 @@ interface TaskContextValue {
 }
 
 const TaskContext = createContext<TaskContextValue | null>(null);
+
+function loadTasks(): Task[] {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
 
 function taskReducer(state: TaskState, action: TaskAction): TaskState {
   switch (action.type) {
@@ -38,35 +47,17 @@ function taskReducer(state: TaskState, action: TaskAction): TaskState {
             : task
         ),
       };
-    case 'SET_TASKS':
-      return { tasks: action.payload };
     default:
       return state;
   }
 }
 
 export function TaskProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(taskReducer, { tasks: [] });
-  const isLoaded = useRef(false);
+  const [state, dispatch] = useReducer(taskReducer, { tasks: loadTasks() });
 
-  // Load from localStorage on mount
+  // Save to localStorage on every change
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        dispatch({ type: 'SET_TASKS', payload: JSON.parse(stored) });
-      }
-    } catch {
-      // Ignore parse errors
-    }
-    isLoaded.current = true;
-  }, []);
-
-  // Save to localStorage on every change (after initial load)
-  useEffect(() => {
-    if (isLoaded.current) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.tasks));
-    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state.tasks));
   }, [state.tasks]);
 
   return (
