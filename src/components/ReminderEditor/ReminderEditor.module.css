@@ -1,0 +1,173 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.row {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rowHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.typeToggle {
+  display: flex;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.typeBtn {
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.typeBtn:hover {
+  color: var(--color-text);
+}
+
+.typeBtnActive {
+  background: rgba(167, 139, 250, 0.25);
+  color: var(--color-primary-hover);
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  color: var(--color-danger);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity var(--transition);
+}
+
+.deleteBtn:hover {
+  opacity: 1;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.intervalRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fieldLabel {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.input {
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--color-text);
+  transition: border-color var(--transition);
+  color-scheme: dark;
+}
+
+.input:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.numberInput {
+  width: 60px;
+  text-align: center;
+}
+
+.select {
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: border-color var(--transition);
+  color-scheme: dark;
+}
+
+.select:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.daysRow {
+  display: flex;
+  gap: 4px;
+}
+
+.dayBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.dayBtn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+.dayBtnActive {
+  background: rgba(167, 139, 250, 0.3);
+  border-color: var(--color-primary);
+  color: var(--color-primary-hover);
+}
+
+.summary {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.addBtn {
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-sm);
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.addBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-primary);
+}

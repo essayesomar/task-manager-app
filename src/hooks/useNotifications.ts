@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTasks } from '../context/TaskContext';
+import { shouldFireReminder } from '../lib/reminderUtils';
 
 type PermissionState = NotificationPermission | 'unsupported';
 
@@ -9,12 +10,16 @@ function getSwActive(): Promise<ServiceWorker | null> {
 }
 
 export function useNotifications() {
-  const { tasks } = useTasks();
+  const { tasks, dispatch } = useTasks();
 
   const [permission, setPermission] = useState<PermissionState>(() => {
     if (typeof Notification === 'undefined') return 'unsupported';
     return Notification.permission;
   });
+
+  // Keep a ref so the interval callback always sees current tasks
+  const tasksRef = useRef(tasks);
+  tasksRef.current = tasks;
 
   // Register the service worker once
   useEffect(() => {
@@ -29,14 +34,24 @@ export function useNotifications() {
     setPermission(result);
   }, []);
 
-  // Keep the SW in sync with the current task count
+  // Sync reminder data to the service worker whenever tasks change
   useEffect(() => {
     if (permission !== 'granted') return;
 
-    const incompleteCount = tasks.filter((t) => !t.isCompleted).length;
+    const schedule = tasks
+      .filter((t) => !t.isCompleted && t.reminders.length > 0)
+      .map((t) => ({
+        taskId: t.id,
+        taskTitle: t.title,
+        reminders: t.reminders,
+        createdAt: t.createdAt,
+      }));
 
     getSwActive().then((sw) => {
       if (sw) {
+        sw.postMessage({ type: 'SYNC_REMINDERS', schedule });
+        // Also keep legacy START_TIMER for backward compat during transition
+        const incompleteCount = tasks.filter((t) => !t.isCompleted).length;
         sw.postMessage({ type: 'START_TIMER', count: incompleteCount });
       }
     });
@@ -48,27 +63,40 @@ export function useNotifications() {
     };
   }, [permission, tasks]);
 
-  // Fallback: in-page timer for when SW timer gets killed
+  // In-page timer: check reminders every minute (aligned to clock minute)
   useEffect(() => {
     if (permission !== 'granted') return;
 
-    const sendNotification = () => {
-      const incompleteCount = tasks.filter((t) => !t.isCompleted).length;
-      if (incompleteCount === 0) return;
+    const checkReminders = () => {
+      const now = new Date();
+      const currentTasks = tasksRef.current;
 
-      // Use SW notification if available, otherwise direct
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.ready.then((reg) => {
-          reg.showNotification('Task Reminder', {
-            body: `You have ${incompleteCount} task${incompleteCount === 1 ? '' : 's'} to do!`,
-            icon: '/vite.svg',
-            tag: 'task-reminder',
-          });
-        });
-      } else {
-        new Notification('Task Reminder', {
-          body: `You have ${incompleteCount} task${incompleteCount === 1 ? '' : 's'} to do!`,
-        });
+      for (const task of currentTasks) {
+        if (task.isCompleted) continue;
+        for (const reminder of task.reminders ?? []) {
+          if (shouldFireReminder(reminder, now)) {
+            // Show notification with task title
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.ready.then((reg) => {
+                reg.showNotification('Task Reminder', {
+                  body: task.title,
+                  icon: '/vite.svg',
+                  tag: `reminder-${task.id}-${reminder.id}`,
+                });
+              });
+            } else {
+              new Notification('Task Reminder', {
+                body: task.title,
+              });
+            }
+
+            // Mark reminder as fired
+            dispatch({
+              type: 'MARK_REMINDER_FIRED',
+              payload: { taskId: task.id, reminderId: reminder.id },
+            });
+          }
+        }
       }
     };
 
@@ -77,15 +105,15 @@ export function useNotifications() {
     let intervalId: number;
 
     const timeoutId = window.setTimeout(() => {
-      sendNotification();
-      intervalId = window.setInterval(sendNotification, 60 * 1000);
+      checkReminders();
+      intervalId = window.setInterval(checkReminders, 60 * 1000);
     }, msUntilNextMinute);
 
     return () => {
       clearTimeout(timeoutId);
       clearInterval(intervalId);
     };
-  }, [permission, tasks]);
+  }, [permission, dispatch]);
 
   return { permission, requestPermission };
 }

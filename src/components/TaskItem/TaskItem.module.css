@@ -23,11 +23,20 @@
   opacity: 0.65;
 }
 
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .label {
   display: flex;
   align-items: center;
   gap: 12px;
   cursor: pointer;
+  flex: 1;
+  min-width: 0;
 }
 
 .checkbox {
@@ -81,4 +90,59 @@
   font-size: 0.84rem;
   color: var(--color-text-muted);
   line-height: 1.5;
+}
+
+/* Bell / reminder toggle */
+
+.bellBtn {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px;
+  position: relative;
+  flex-shrink: 0;
+  transition: color var(--transition);
+}
+
+.bellBtn:hover {
+  color: var(--color-text);
+}
+
+.bellActive {
+  color: var(--color-warning);
+}
+
+.bellActive:hover {
+  color: var(--color-warning);
+}
+
+.bellIcon {
+  width: 18px;
+  height: 18px;
+}
+
+.badge {
+  position: absolute;
+  top: -2px;
+  right: -4px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Reminder panel */
+
+.reminderPanel {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }

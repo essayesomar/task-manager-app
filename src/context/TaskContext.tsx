@@ -18,7 +18,10 @@ const TaskContext = createContext<TaskContextValue | null>(null);
 function loadTasks(): Task[] {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : [];
+    if (!stored) return [];
+    const tasks: Task[] = JSON.parse(stored);
+    // Migration: default missing reminders to []
+    return tasks.map((t) => ({ ...t, reminders: t.reminders ?? [] }));
   } catch {
     return [];
   }
@@ -35,6 +38,7 @@ function taskReducer(state: TaskState, action: TaskAction): TaskState {
             description: action.payload.description,
             isCompleted: false,
             createdAt: new Date().toISOString(),
+            reminders: action.payload.reminders ?? [],
           },
           ...state.tasks,
         ],
@@ -46,6 +50,30 @@ function taskReducer(state: TaskState, action: TaskAction): TaskState {
             ? { ...task, isCompleted: !task.isCompleted }
             : task
         ),
+      };
+    case 'SET_REMINDERS':
+      return {
+        tasks: state.tasks.map((task) =>
+          task.id === action.payload.taskId
+            ? { ...task, reminders: action.payload.reminders }
+            : task
+        ),
+      };
+    case 'MARK_REMINDER_FIRED':
+      return {
+        tasks: state.tasks.map((task) => {
+          if (task.id !== action.payload.taskId) return task;
+          return {
+            ...task,
+            reminders: task.reminders.map((r) => {
+              if (r.id !== action.payload.reminderId) return r;
+              if (r.type === 'once') {
+                return { ...r, fired: true };
+              }
+              return { ...r, lastFired: new Date().toISOString() };
+            }),
+          };
+        }),
       };
     default:
       return state;
