@@ -1,0 +1,28 @@
+.picker {
+  display: flex;
+  gap: 4px;
+}
+
+.pill {
+  padding: 4px 10px;
+  border-radius: 99px;
+  border: 1px solid rgba(167, 139, 250, 0.35);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.pill:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.pillActive {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  border-color: transparent;
+  color: #fff;
+}

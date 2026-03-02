@@ -1,13 +1,13 @@
 {
-  "name": "Task Reminder",
-  "short_name": "Tasks",
+  "name": "Skouza",
+  "short_name": "Skouza",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f0c29",
   "theme_color": "#302b63",
   "icons": [
     {
-      "src": "/vite.svg",
+      "src": "/logo.svg",
       "sizes": "any",
       "type": "image/svg+xml"
     }

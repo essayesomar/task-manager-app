@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTasks } from '../../context/TaskContext';
 import { ReminderEditor } from '../ReminderEditor/ReminderEditor';
 import type { Reminder } from '../../types';
@@ -6,6 +7,7 @@ import styles from './TaskForm.module.css';
 
 export function TaskForm() {
   const { dispatch } = useTasks();
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [reminders, setReminders] = useState<Reminder[]>([]);
@@ -33,24 +35,24 @@ export function TaskForm() {
       <input
         className={styles.input}
         type="text"
-        placeholder="Task title"
+        placeholder={t('taskForm.titlePlaceholder')}
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         required
       />
       <textarea
         className={styles.textarea}
-        placeholder="Description (optional)"
+        placeholder={t('taskForm.descPlaceholder')}
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         rows={2}
       />
       <div className={styles.reminderSection}>
-        <span className={styles.reminderLabel}>Reminders</span>
+        <span className={styles.reminderLabel}>{t('taskForm.remindersLabel')}</span>
         <ReminderEditor reminders={reminders} onChange={setReminders} />
       </div>
       <button className={styles.button} type="submit">
-        Add Task
+        {t('taskForm.addTask')}
       </button>
     </form>
   );

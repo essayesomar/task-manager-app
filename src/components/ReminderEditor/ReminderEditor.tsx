@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { Reminder, OneTimeReminder, RecurringReminder } from '../../types';
 import { formatReminder } from '../../lib/reminderUtils';
 import styles from './ReminderEditor.module.css';
@@ -6,8 +7,6 @@ interface ReminderEditorProps {
   reminders: Reminder[];
   onChange: (reminders: Reminder[]) => void;
 }
-
-const DAY_LABELS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 function makeOneTime(): OneTimeReminder {
   return {
@@ -29,6 +28,25 @@ function makeRecurring(): RecurringReminder {
 }
 
 export function ReminderEditor({ reminders, onChange }: ReminderEditorProps) {
+  const { t } = useTranslation();
+
+  const dayLabels: string[] = t('dayShort', { returnObjects: true }) as string[];
+
+  const formatStrings = {
+    every: t('reminder.every'),
+    at: t('reminder.at'),
+    months: t('months', { returnObjects: true }) as string[],
+    dayNames: t('dayNames', { returnObjects: true }) as string[],
+    units: {
+      hour: t('reminder.hour'),
+      hours: t('reminder.hours'),
+      day: t('reminder.day'),
+      days: t('reminder.days'),
+      week: t('reminder.week'),
+      weeks: t('reminder.weeks'),
+    },
+  };
+
   const update = (id: string, patch: Partial<Reminder>) => {
     onChange(
       reminders.map((r) => (r.id === id ? { ...r, ...patch } as Reminder : r))
@@ -71,14 +89,14 @@ export function ReminderEditor({ reminders, onChange }: ReminderEditorProps) {
                 className={`${styles.typeBtn} ${r.type === 'once' ? styles.typeBtnActive : ''}`}
                 onClick={() => switchType(r.id, 'once')}
               >
-                One-time
+                {t('reminder.oneTime')}
               </button>
               <button
                 type="button"
                 className={`${styles.typeBtn} ${r.type === 'recurring' ? styles.typeBtnActive : ''}`}
                 onClick={() => switchType(r.id, 'recurring')}
               >
-                Recurring
+                {t('reminder.recurring')}
               </button>
             </div>
             <button
@@ -105,7 +123,7 @@ export function ReminderEditor({ reminders, onChange }: ReminderEditorProps) {
           {r.type === 'recurring' && (
             <div className={styles.fields}>
               <div className={styles.intervalRow}>
-                <span className={styles.fieldLabel}>Every</span>
+                <span className={styles.fieldLabel}>{t('reminder.every')}</span>
                 <input
                   type="number"
                   min={1}
@@ -127,15 +145,15 @@ export function ReminderEditor({ reminders, onChange }: ReminderEditorProps) {
                     update(r.id, patch);
                   }}
                 >
-                  <option value="hours">hours</option>
-                  <option value="days">days</option>
-                  <option value="weeks">weeks</option>
+                  <option value="hours">{t('reminder.hours')}</option>
+                  <option value="days">{t('reminder.days')}</option>
+                  <option value="weeks">{t('reminder.weeks')}</option>
                 </select>
               </div>
 
               {r.unit !== 'hours' && (
                 <div className={styles.intervalRow}>
-                  <span className={styles.fieldLabel}>at</span>
+                  <span className={styles.fieldLabel}>{t('reminder.at')}</span>
                   <input
                     type="time"
                     className={styles.input}
@@ -147,7 +165,7 @@ export function ReminderEditor({ reminders, onChange }: ReminderEditorProps) {
 
               {r.unit === 'weeks' && (
                 <div className={styles.daysRow}>
-                  {DAY_LABELS.map((label, i) => (
+                  {dayLabels.map((label, i) => (
                     <button
                       key={i}
                       type="button"
@@ -162,12 +180,16 @@ export function ReminderEditor({ reminders, onChange }: ReminderEditorProps) {
             </div>
           )}
 
-          <div className={styles.summary}>{r.type === 'once' && !r.datetime ? 'Pick a date & time' : formatReminder(r)}</div>
+          <div className={styles.summary}>
+            {r.type === 'once' && !r.datetime
+              ? t('reminder.pickDateTime')
+              : formatReminder(r, formatStrings)}
+          </div>
         </div>
       ))}
 
       <button type="button" className={styles.addBtn} onClick={addReminder}>
-        + Add reminder
+        {t('reminder.addReminder')}
       </button>
     </div>
   );

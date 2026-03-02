@@ -106,32 +106,65 @@ export function getNextFireTime(reminder: Reminder, now: Date): Date | null {
   return null;
 }
 
-const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+export interface FormatStrings {
+  every: string;
+  at: string;
+  months: string[];
+  dayNames: string[];
+  units: {
+    hour: string;
+    hours: string;
+    day: string;
+    days: string;
+    week: string;
+    weeks: string;
+  };
+}
 
-export function formatReminder(reminder: Reminder): string {
+const DEFAULT_STRINGS: FormatStrings = {
+  every: 'Every',
+  at: 'at',
+  months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  dayNames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  units: {
+    hour: 'hour',
+    hours: 'hours',
+    day: 'day',
+    days: 'days',
+    week: 'week',
+    weeks: 'weeks',
+  },
+};
+
+export function formatReminder(reminder: Reminder, strings?: FormatStrings): string {
+  const s = strings ?? DEFAULT_STRINGS;
+
   if (reminder.type === 'once') {
     const d = new Date(reminder.datetime);
-    const month = d.toLocaleString('en-US', { month: 'short' });
+    const month = s.months[d.getMonth()];
     const day = d.getDate();
     const h = d.getHours().toString().padStart(2, '0');
     const m = d.getMinutes().toString().padStart(2, '0');
-    return `${month} ${day} at ${h}:${m}`;
+    return `${month} ${day} ${s.at} ${h}:${m}`;
   }
 
   const r = reminder;
-  const unit = r.every === 1 ? r.unit.replace(/s$/, '') : `${r.every} ${r.unit}`;
+  const unitLabel =
+    r.every === 1
+      ? s.units[r.unit.replace(/s$/, '') as keyof typeof s.units]
+      : `${r.every} ${s.units[r.unit as keyof typeof s.units]}`;
 
   if (r.unit === 'hours') {
-    return `Every ${unit}`;
+    return `${s.every} ${unitLabel}`;
   }
 
-  const label = `Every ${unit} at ${r.time}`;
+  const label = `${s.every} ${unitLabel} ${s.at} ${r.time}`;
 
   if (r.unit === 'weeks' && r.daysOfWeek && r.daysOfWeek.length > 0) {
     const days = r.daysOfWeek
       .slice()
       .sort((a, b) => a - b)
-      .map((d) => DAY_NAMES[d])
+      .map((d) => s.dayNames[d])
       .join(', ');
     return `${label} (${days})`;
   }

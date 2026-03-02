@@ -1,0 +1,38 @@
+{
+  "header": {
+    "stats": "{{total}} créée(s), {{completed}} complétée(s)"
+  },
+  "taskForm": {
+    "titlePlaceholder": "Titre de la tâche",
+    "descPlaceholder": "Description (optionnelle)",
+    "remindersLabel": "Rappels",
+    "addTask": "Ajouter"
+  },
+  "notifications": {
+    "enablePrompt": "Activez les notifications pour recevoir vos rappels.",
+    "enableBtn": "Activer les rappels",
+    "blocked": "Les notifications sont bloquées. Veuillez les activer dans les paramètres de votre navigateur."
+  },
+  "reminder": {
+    "oneTime": "Ponctuel",
+    "recurring": "Récurrent",
+    "every": "Tous les",
+    "at": "à",
+    "pickDateTime": "Choisir une date & heure",
+    "addReminder": "+ Ajouter un rappel",
+    "hours": "heures",
+    "days": "jours",
+    "weeks": "semaines",
+    "hour": "heure",
+    "day": "jour",
+    "week": "semaine"
+  },
+  "dayShort": ["D", "L", "M", "M", "J", "V", "S"],
+  "dayNames": ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
+  "tasks": {
+    "todo": "À faire",
+    "completed": "Terminées",
+    "emptyTodo": "Aucune tâche. Ajoutez-en une ci-dessus !"
+  },
+  "months": ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"]
+}

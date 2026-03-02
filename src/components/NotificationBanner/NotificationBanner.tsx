@@ -1,8 +1,10 @@
+import { useTranslation } from 'react-i18next';
 import { useNotifications } from '../../hooks/useNotifications';
 import styles from './NotificationBanner.module.css';
 
 export function NotificationBanner() {
   const { permission, requestPermission } = useNotifications();
+  const { t } = useTranslation();
 
   if (permission === 'granted' || permission === 'unsupported') return null;
 
@@ -10,19 +12,14 @@ export function NotificationBanner() {
     <div className={styles.banner}>
       {permission === 'default' && (
         <>
-          <p className={styles.text}>
-            Enable notifications to get hourly reminders of your pending tasks.
-          </p>
+          <p className={styles.text}>{t('notifications.enablePrompt')}</p>
           <button className={styles.button} onClick={requestPermission}>
-            Enable Reminders
+            {t('notifications.enableBtn')}
           </button>
         </>
       )}
       {permission === 'denied' && (
-        <p className={styles.text}>
-          Notifications are blocked. Please enable them in your browser settings
-          to receive task reminders.
-        </p>
+        <p className={styles.text}>{t('notifications.blocked')}</p>
       )}
     </div>
   );

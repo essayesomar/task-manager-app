@@ -1,6 +1,26 @@
 .header {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: 36px;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
 }
 
 .title {
@@ -14,8 +34,12 @@
 }
 
 .stats {
-  margin-top: 8px;
+  margin-top: 6px;
   font-size: 0.85rem;
   color: var(--color-text-muted);
   letter-spacing: 0.3px;
+}
+
+.right {
+  padding-top: 6px;
 }
